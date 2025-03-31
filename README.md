@@ -5,7 +5,7 @@ A command-line tool that converts natural language instructions into shell comma
 ## Installation
 
 ```bash
-npm install -g aicli
+npm install -g @neimadvn/aicli
 ```
 
 After installation, you'll need to set up your OpenAI API key:
