@@ -1,6 +1,6 @@
 {
   "name": "@neimadvn/aicli",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "AI-powered CLI tool that converts natural language to shell commands",
   "main": "dist/index.js",
   "type": "module",

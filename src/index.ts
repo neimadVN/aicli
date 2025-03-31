@@ -89,7 +89,11 @@ async function generateCommand(input: string, config: Config): Promise<string | 
       messages: [
         {
           role: 'system',
-          content: `You are a helpful assistant that converts natural language instructions into shell commands. 
+          content: `You are a helpful assistant that converts natural language instructions into shell commands.
+                   Generate shell commands that accurately fulfill the user's request.
+                   For complex requests that require multiple steps, you can generate multiple commands separated by newlines.
+                   Each line will be treated as a separate command that requires confirmation.
+                   You can also use '&&' to chain commands that should be executed together as a single unit.
                    Generate only the command without explanation or markdown.
                    System information: ${JSON.stringify(osInfo)}`
         },
@@ -99,7 +103,7 @@ async function generateCommand(input: string, config: Config): Promise<string | 
         }
       ],
       temperature: 0.3,
-      max_tokens: 100
+      max_tokens: 500
     });
     
     spinner.stop();
@@ -126,6 +130,33 @@ function executeCommand(command: string): void {
     console.log(chalk.green('\nOutput:'));
     console.log(stdout || 'Command executed successfully.');
   });
+}
+
+// Parse and process command(s)
+async function processCommands(commandString: string): Promise<void> {
+  // Split by newlines to get separate commands
+  const commands = commandString.split('\n').filter(cmd => cmd.trim() !== '');
+  
+  for (const command of commands) {
+    console.log(chalk.blue('\nGenerated Command:'));
+    console.log(chalk.yellow(command));
+    
+    const answer = await inquirer.prompt([
+      {
+        type: 'confirm',
+        name: 'execute',
+        message: 'Do you want to execute this command?',
+        default: false
+      }
+    ]);
+    
+    if (answer.execute) {
+      console.log(chalk.blue('\nExecuting command...'));
+      executeCommand(command);
+    } else {
+      console.log(chalk.gray('Command skipped.'));
+    }
+  }
 }
 
 // Main program
@@ -186,22 +217,7 @@ program
       const command = await generateCommand(instruction, config);
       
       if (command) {
-        console.log(chalk.blue('\nGenerated Command:'));
-        console.log(chalk.yellow(command));
-        
-        const answer = await inquirer.prompt([
-          {
-            type: 'confirm',
-            name: 'execute',
-            message: 'Do you want to execute this command?',
-            default: false
-          }
-        ]);
-        
-        if (answer.execute) {
-          console.log(chalk.blue('\nExecuting command...'));
-          executeCommand(command);
-        }
+        await processCommands(command);
       }
     }
   });
