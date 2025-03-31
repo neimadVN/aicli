@@ -38,7 +38,22 @@ aicli "copy file dist into folder ~"
 
 The tool will generate a shell command (e.g., `cp ./dist ~`), show it to you, and ask for confirmation before executing.
 
-You can also run the tool without arguments to be prompted for your instruction:
+### Multi-command processing
+
+For complex requests, the tool can generate multiple commands:
+
+```bash
+aicli "setup a new nodejs project, initialize git, create a README with hello world"
+```
+
+Each command will be presented individually for confirmation before execution. You can:
+- Approve each command individually
+- Skip commands you don't want to execute
+- Use chained commands (with &&) when they should execute as a unit
+
+### Interactive mode
+
+You can run the tool without arguments to be prompted for your instruction:
 
 ```bash
 aicli
@@ -67,6 +82,7 @@ aicli config --set-model gpt-4o
 ## Features
 
 - Convert natural language to shell commands
+- Support for multi-command sequences with individual confirmation
 - Provides OS context to the AI model
 - Confirmation before command execution
 - Configurable OpenAI API key and model
