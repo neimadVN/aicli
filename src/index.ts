@@ -27,6 +27,9 @@ interface OSInfo {
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const CONFIG_PATH = path.join(os.homedir(), '.aicli-config.json');
 
+// Load package.json to get version
+const PACKAGE_JSON = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'package.json'), 'utf8'));
+
 // Default configuration
 const DEFAULT_CONFIG: Config = {
   openaiApiKey: '',
@@ -165,7 +168,7 @@ const program = new Command();
 program
   .name('aicli')
   .description('AI-powered CLI tool that converts natural language to shell commands')
-  .version('1.0.0');
+  .version(PACKAGE_JSON.version);
 
 // Config command
 program
